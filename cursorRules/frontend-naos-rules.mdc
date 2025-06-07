@@ -1,0 +1,287 @@
+---
+description:
+globs:
+alwaysApply: true
+rules_version: <!-- dynamic_version -->
+---
+
+You are Brevo Frontend Engineer who knows how to use our design system called "naos". Rather than using outdated knowledge of naos from the internet, you effectively use Naos MCP to learn things about naos components before answering questions or creating / updating UI code. When asked to write some frontend code, you always prefer Naos components over custom components to bring consistency in the UI.
+
+- You always learn and understand Naos components through Naos MCP before answering questions or writing frontend code.
+- You always use Naos components only and don't write custom styles unless extremely required
+- You fix any TypeScript, ESlint errors, or Terminal errors that occur and refer to component docs of that component from Naos MCP again if you're unable to figure out props and prop types on your own
+- You have general understanding on how to do layouts using Naos using Box component and Styled Props, you know what `StyledPropsNaos` type refers to by learning about it from frontend-Naos-rules rule and hence understand what spacing values Naos supports, and how to do responsive layout in Naos. E.g. Naos does not support `margin={0}` or `margin="0"` and only supports `margin="spacing.3"` or `margin="24px"` etc
+- You effectively install or suggest installing relevant libraries (e.g. `react-router-dom` with SideNav or TopNav)
+- While building complex layouts, you breakdown the task into smaller subtasks and then build these complex layouts part-by-part
+- You use minimal version of components unless explicitly asked for a certain usecase. E.g. don't add size prop / color prop etc unless you explicitly know which one to use
+
+
+## Spacings
+
+Spacings help creating hierarchy and relationships between elements.
+The spacing scale is inherited by the padding, margin, width, height, maxHeight, gap, inset, space, and translate core plugins.
+
+```
+These tokens are considered legacy and you should avoid them in new code and soon to be removed.
+
+var(--sib-spacing_0) - 0
+var(--sib-spacing_1) - .5rem
+var(--sib-spacing_2) - 1rem
+var(--sib-spacing_3) - 1.5rem
+var(--sib-spacing_4) - 2rem
+var(--sib-spacing_5) - 2.5rem
+var(--sib-spacing_6) - 3rem
+var(--sib-spacing_7) - 3.5rem
+var(--sib-spacing_8) - 4rem
+
+New Safe Tokens:
+
+var(--brand-spacing_0) - 0
+var(--brand-spacing_1) - 0.25rem
+var(--brand-spacing_2) - 0.5rem
+var(--brand-spacing_3) - 0.75rem
+var(--brand-spacing_4) - 1rem
+var(--brand-spacing_5) - 1.25rem
+var(--brand-spacing_6) - 1.5rem
+var(--brand-spacing_7) - 1.75rem
+var(--brand-spacing_8) - 2rem
+var(--brand-spacing_9) - 2.25rem
+var(--brand-spacing_10) - 2.5rem
+var(--brand-spacing_11) - 2.75rem
+var(--brand-spacing_12) - 3rem
+var(--brand-spacing_16) - 4rem
+var(--brand-spacing_20) - 5rem
+var(--brand-spacing_24) - 6rem
+var(--brand-spacing_32) - 8rem
+var(--brand-spacing_40) - 10rem
+var(--brand-spacing_48) - 12rem
+var(--brand-spacing_56) - 14rem
+var(--brand-spacing_64) - 16rem
+var(--brand-spacing_80) - 20rem
+
+```
+
+# Media Queries device Breakpoints
+
+> The Media query in CSS is used to create a responsive web design. It means that the view of a web page differs from system to system based on screen or media types. The breakpoint specifies for what device-width size, the content is just starting to break or deform.
+
+For more details, see our <a class="https://tailwindcss.com/docs/screens" target="_blank" rel="noopener noreferrer">Media queries Breakpoints' guideline</a>.
+
+All our Custom Screen breakpoints for media queries are listed just below:
+
+```
+These breakpoint tokens are considered legacy and you should avoid them in new code and soon to be removed.
+
+	--sib-breakpoint_mobile-max: "599px";
+	--sib-breakpoint_tablet-min: "600px";
+	--sib-breakpoint_tablet-max: "899px";
+	--sib-breakpoint_small-desktop-min: "900px";
+	--sib-breakpoint_small-desktop-max: "1199px";
+	--sib-breakpoint_medium-desktop-min: "1200px";
+	--sib-breakpoint_medium-desktop-max: "1799px";
+	--sib-breakpoint_large-desktop-min: "1800px";
+
+Revised breakpoint values recommended to be used in your code for various screen sizes:
+
+	media query breakpoint for mobile device (sm) : 640px;
+      /* => @media (min-width: 640px) { ... } */
+	media query breakpoint for tablet device (potrait mode) (md) : 768px;
+      /* => @media (min-width: 768px) { ... } */
+	media query breakpoint for tablet device (landscape mode) (lg) : 1024px
+      /*  => @media (min-width: 1024px) { ... } */
+	media query breakpoint for laptop : 1280px
+      /* => @media (min-width: 1280px) { ... } */
+	media query breakpoint for desktop: 1536px
+      /* => @media (min-width: 1536px) { ... } */
+```
+
+# Colors
+
+> On Naos, we have 8 different core colours that defines our platform.
+> Each of them has its own role, and it serves a concrete purpose.
+> By combining the core colors we are able to convey the our brand into the interface, while keeping a consistent use of our color palette.
+
+For more details, see our [Colors' guideline](https://brevo.design/880114aae/p/145cda-core-colors).
+
+## Using [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
+
+If you don't know CSS Custom Properties, you can see basic usage documentation [here](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties#Basic_usage). All our CSS Custom Properties for colors are listed at "Swatches" column just below:
+
+{
+  "--sib-color_primary-press": "hsla(0, 0%, 27.8%, 1)",
+  "--sib-color_primary-hover": "hsla(0, 0%, 17.3%, 1)",
+  "--sib-color_primary-default": "hsla(0, 0%, 10.6%, 1)",
+  "--sib-color_primary-graphical": "hsla(0, 0%, 10.6%, 1)",
+  "--sib-color_primary-background": "hsla(0, 0%, 96%, 1)",
+  "--sib-color_primary-background-dark": "hsla(0, 0%, 94.1%, 1)",
+  "--sib-color_negative-press": "hsla(349, 77.8%, 40.6%, 1)",
+  "--sib-color_negative-hover": "hsla(349, 77.7%, 45.7%, 1)",
+  "--sib-color_negative-default": "hsla(353, 100%, 61.4%, 1)",
+  "--sib-color_negative-graphical": "hsla(353, 100%, 61.4%, 1)",
+  "--sib-color_negative-background": "hsla(354, 100%, 96.3%, 1)",
+  "--sib-color_negative-background-dark": "hsla(353, 100%, 92%, 1)",
+  "--sib-color_positive-press": "hsla(158, 100%, 20.8%, 1)",
+  "--sib-color_positive-hover": "hsla(162, 97%, 26.1%, 1)",
+  "--sib-color_positive-default": "hsla(162, 86.6%, 32.2%, 1)",
+  "--sib-color_positive-graphical": "hsla(162, 86.6%, 32.2%, 1)",
+  "--sib-color_positive-background": "hsla(164, 52.4%, 95.9%, 1)",
+  "--sib-color_positive-background-dark": "hsla(162, 41.8%, 89.2%, 1)",
+  "--sib-color_positive-selected": "hsla(244, 70%, 96.1%, 1)",
+  "--sib-color_warning-press": "hsla(14, 60.4%, 39.6%, 1)",
+  "--sib-color_warning-hover": "hsla(14, 61.4%, 45.7%, 1)",
+  "--sib-color_warning-default": "hsla(15, 100%, 62%, 1)",
+  "--sib-color_warning-graphical": "hsla(15, 100%, 62%, 1)",
+  "--sib-color_warning-background": "hsla(16, 100%, 97.1%, 1)",
+  "--sib-color_warning-background-dark": "hsla(18, 100%, 91%, 1)",
+  "--sib-color_content-primary": "hsla(0, 0%, 10.6%, 1)",
+  "--sib-color_content-secondary": "hsla(0, 0%, 41.2%, 1)",
+  "--sib-color_content-white": "hsla(0, 0%, 100%, 1)",
+  "--sib-color_surface-hover-background": "hsla(0, 0%, 81.2%, 1)",
+  "--sib-color_surface-mid-grey-background": "hsla(0, 0%, 89%, 1)",
+  "--sib-color_surface-extra-light-grey-background": "hsla(0, 0%, 98%, 1)",
+  "--sib-color_surface-grey-background": "hsla(0, 0%, 94.1%, 1)",
+  "--sib-color_surface-sidebar-background": "hsla(0, 0%, 96%, 1)",
+  "--sib-color_surface-white-background": "hsla(0, 0%, 100%, 1)",
+  "--sib-color_surface-overlays-background": "hsla(102, 12%, 38%, .4)",
+  "--sib-color_accent-gold-background": "hsla(44, 34.8%, 72.4%, 1)",
+  "--sib-color_accent-pink-background": "hsla(353, 100%, 84.9%, 1)",
+  "--sib-color_accent-03": "hsla(103, 96.4%, 89%, 1)",
+  "--sib-color_accent-04": "hsla(103, 93.9%, 93.5%, 1)",
+  "--sib-color_accent-05": "hsla(100, 100%, 98.2%, 1)",
+  "--sib-color_accent-08": "hsla(45, 100%, 96.1%, 1)",
+  "--sib-color_interactive-default": "hsla(0, 0%, 10.6%, 1)",
+  "--sib-color_upgrade-default": "hsla(338, 83.6%, 68.8%, 1)",
+  "--sib-color_upgrade-graphical": "hsla(338, 83.6%, 68.8%, 1)",
+  "--sib-color_upgrade-background": "hsla(333, 100%, 97.8%, 1)",
+  "--sib-color_upgrade-background-dark": "hsla(339, 81.3%, 93.7%, 1)",
+  "--sib-color_upgrade-hover": "hsla(338, 89%, 59%, 1)",
+  "--sib-color_upgrade-press": "hsla(339, 68.9%, 52.2%, 1)",
+  "--sib-color_information-default": "hsla(245, 67%, 60.8%, 1)",
+  "--sib-color_information-graphical": "hsla(245, 67%, 60.8%, 1)",
+  "--sib-color_information-press": "",
+  "--sib-color_information-hover": "hsla(245, 43.5%, 48.6%, 1)",
+  "--sib-color_information-background": "hsla(244, 70%, 96.1%, 1)",
+  "--sib-color_information-background-dark": "hsla(244, 65.2%, 91%, 1)",
+  "--sib-cta-default-primary": "linear-gradient(0deg, #1b1b1b 0%, #2c2c2c 100%)",
+  "--sib-cta-default-secondary": "linear-gradient(0deg, #fafafa 0%, #fff 100%)"
+}
+
+```
+
+
+# Elevations
+
+> Elevations are the layered surfaces that form the foundation of the UI. They create a blank canvas where other UI will be placed, such as text, icons, backgrounds, and borders.
+> Most elevations consist of surfaces and shadows. Together, surfaces and shadows give the impression of lift or depth.
+
+For more details, see our <a class="vtmn-link vtmn-link--icon-along" href="https://atlassian.design/foundations/elevation" target="_blank" rel="noopener noreferrer">Elevations' guideline</a>.
+
+## Using [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
+
+If you don't know CSS Custom Properties, you can see basic usage documentation [here](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties#Basic_usage). All our CSS Custom Properties for elevations are listed just below:
+
+```
+--brand-shadow_light-xsmall: 0px 1px 2px hsla(0, 0%, 11%, 0.08);
+--brand-shadow_light-small: 0px 4px 8px -2px hsla(0, 0%, 11%, 0.14), 0px 2px 4px -2px hsla(0, 0%, 11%, 0.1);
+--brand-shadow_light-medium: 0px 10px 16px -4px hsla(0, 0%, 11%, 0.1), 0px 4px 6px -2px hsla(0, 0%, 11%, 0.04);
+--brand-shadow_light-large: 0px 20px 24px -4px hsla(0, 0%, 11%, 0.08), 0px 8px 8px hsla(0, 0%, 11%, 0.03);
+
+--brand-shadow_dark-xsmall: 0px 1px 2px hsla(0, 0%, 0%, 0.16);
+--brand-shadow_dark-small: 0px 4px 8px -2px hsla(0, 0%, 0%, 0.24), 0px 2px 4px -2px hsla(0, 0%, 0%, 0.16);
+--brand-shadow_dark-medium: 0px 10px 16px -4px hsla(0, 0%, 0%, 0.2), 0px 4px 6px -2px hsla(0, 0%, 0%, 0.16);
+--brand-shadow_dark-large: 0px 20px 24px -4px hsla(0, 0%, 0%, 0.2), 0px 8px 8px hsla(0, 0%, 0%, 0.16);
+```
+
+# Radius
+
+> Radius help us to keep a sustainable & global identity by drawing corners.
+
+For more details, see our <a class="vtmn-link vtmn-link--icon-along" href="https://www.decathlon.design/726f8c765/v/0/p/533f3d-radius" target="_blank" rel="noopener noreferrer">Radius' guideline</a>.
+
+## Using [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
+
+If you don't know CSS Custom Properties, you can see basic usage documentation [here](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties#Basic_usage). All our CSS Custom Properties for colors are listed at "Swatches" column just below:
+
+```
+These tokens are considered legacy and you should avoid them in new code and soon to be removed.
+
+var(--sib-border-radius_sm) - .25rem
+var(--sib-border-radius_md) - .5rem
+var(--sib-border-radius_lg) - 1rem
+var(--sib-border-radius_xlg) - 2rem
+
+New Tokens:
+
+var(--brand-rounded-x1) - .25rem
+var(--brand-rounded-x2) - .5rem
+var(--brand-rounded-x3) - .75rem
+var(--brand-rounded-x4) - 1rem
+var(--brand-rounded-x5) - 1.25rem
+var(--brand-rounded-x6) - 1.5rem
+var(--brand-rounded-x8) - 2rem
+var(--brand-rounded-x10) - 2.5rem
+var(--brand-rounded-x12) - 3rem
+var(--brand-rounded-x20) - 5rem
+var(--brand-rounded-x40) - 10rem
+
+```
+
+# Stacking
+
+> Stacking context is a three-dimensional conceptualization of HTML elements along an imaginary z-axis relative to the user. To create a custom stacking order, you can use the z-index property on a positioned element. When no z-index property is specified, elements are rendered on the default rendering layer (Layer 0).
+
+For more details, see our <a class="vtmn-link vtmn-link--icon-along" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Understanding_z-index/Using_z-index" target="_blank" rel="noopener noreferrer">Stacking' guideline</a>.
+
+## Using [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
+
+If you don't know CSS Custom Properties, you can see basic usage documentation [here](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties#Basic_usage).
+All the stacking tokens are listed below:
+
+```
+  var (--sib-z-index_loader)                  - 1099;
+  var (--sib-z-index_floatingPanel)           - 1010;
+  var (--sib-z-index_alert)                   - 1009;
+  var (--sib-z-index_snackbar)                - 1008;
+  var (--sib-z-index_sidebar_menu_checkbox)   - 1003;
+  var (--sib-z-index_sidebar_menu_icon)       - 1002;
+  var (--sib-z-index_tooltip)                 - 1001;
+  var (--sib-z-index_modal)                   - 1000;
+  var (--sib-z-index_navigation)               - 999;
+  var (--sib-z-index_navigation_menu_checkbox) - 991;
+  var (--sib-z-index_navigation_menu_icon)     - 990;
+  var (--sib-z-index_dropdown)                 - 910;
+  var (--sib-z-index_bulkaction)               - 908;
+  var (--sib-z-index_header)                   - 900;
+  var (--sib-z-index_notification)             - 800;
+
+```
+
+# Typography
+
+## Heading
+Classes available for font-family:
+
+"sib-typo_heading--primary": ("Tomato-Grotesk-Regular", "Verdana", sans-serif, "ui-sans-serif", "system-ui", "-apple-system")
+"sib-typo_heading--secondary_interactive": ("Inter-SemiBold", "Arial", sans-serif, "ui-sans-serif", "system-ui", "-apple-system")
+"sib-typo_heading--secondary_regular": ("Inter-Regular", "Arial", sans-serif, "ui-sans-serif", "system-ui", "-apple-system")
+"sib-typo_heading--secondary_bold": ("Inter-Bold", "Arial", sans-serif, "ui-sans-serif", "system-ui", "-apple-system")
+
+Classes available for sizes:
+  "sib-typo_heading-size--xl": (font-size: 40px; line-height: 48px;)
+  "sib-typo_heading-size--lg": (font-size: 32px; line-height: 40px;)
+  "sib-typo_heading-size--md": (font-size: 24px; line-height: 32px;)
+  "sib-typo_heading-size--sm": (font-size: 20px; line-height: 24px;)
+  "sib-typo_heading-size--xs": (font-size: 16px; line-height: 24px;)
+
+## Body
+
+ Classes available for font-family:
+  "sib-typo_text--regular": ("Inter-Regular", "Arial", sans-serif, "ui-sans-serif", "system-ui", "-apple-system")
+  "sib-typo_text--interactive": ("Inter-SemiBold", "Arial", sans-serif, "ui-sans-serif", "system-ui", "-apple-system")
+  "sib-typo_text--bold": ("Inter-Bold", "Arial", sans-serif, "ui-sans-serif", "system-ui", "-apple-system")
+
+ Classes available for sizes:
+  "sib-typo_text_size--lg": (font-size: 16px; line-height: 24px;)
+  "sib-typo_text_size--md": (font-size: 14px; line-height: 20px;)
+  "sib-typo_text_size--sm": (font-size: 12px; line-height: 16px;)
+```
