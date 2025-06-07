@@ -1,0 +1,63 @@
+{
+  "name": "@dtsl/naos-mcp",
+  "version": "0.0.0",
+  "description": "Model Context Protocol server for Naos",
+  "keywords": [
+    "brevo",
+    "naos",
+    "mcp"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dtsl/design-system.git"
+  },
+  "license": "MIT",
+  "author": "Brevo",
+  "type": "module",
+  "main": "dist/server.js",
+  "bin": "dist/server.js",
+  "files": [
+    "dist",
+    "knowledgebase",
+    "cursorRules"
+  ],
+  "scripts": {
+    "build": "cross-env NODE_ENV=production sh -c \"tsc --project ./tsconfig.json  && chmod +x dist/server.js && node src/replaceEnv.js\"",
+    "dev": "tsx src/server.ts",
+    "inspect": "npx -y @modelcontextprotocol/inspector node dist/server.js",
+    "lint": "eslint --ext .ts,.js src/",
+    "lint:fix": "eslint --ext .ts,.js src/ --fix",
+    "lint:check": "eslint --ext .ts,.js src/ --max-warnings 0",
+    "format": "prettier --write \"src/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json}\"",
+    "prepare": "yarn build",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "resolutions": {
+    "zod": "3.24.1"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.11.0",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/node": "20.12.6",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "cross-env": "7.0.3",
+    "dotenv": "16.4.5",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "globals": "^16.2.0",
+    "prettier": "^3.5.3",
+    "replace-in-file": "8.3.0",
+    "tsx": "4.7.1",
+    "typescript": "4.8.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}

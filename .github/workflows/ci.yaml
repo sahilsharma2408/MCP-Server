@@ -1,0 +1,23 @@
+name: CI - Continuous Integration
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+jobs:
+  ci:
+    name: Install / Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.15.0'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Lint
+        run: yarn lint
