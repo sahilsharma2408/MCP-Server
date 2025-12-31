@@ -23,7 +23,8 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production sh -c \"tsc --project ./tsconfig.json  && chmod +x dist/server.js && node src/replaceEnv.js\"",
     "dev": "tsx src/server.ts",
-    "inspect": "npx -y @modelcontextprotocol/inspector node dist/server.js",
+    "inspect": "cross-env NODE_ENV=production PORT=3000 node dist/server.js",
+    "inspect:mcp": "npx -y @modelcontextprotocol/inspector node dist/server.js",
     "lint": "eslint --ext .ts src/",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit"

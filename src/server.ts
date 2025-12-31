@@ -2,6 +2,8 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { IncomingMessage, ServerResponse } from 'http';
 // import * as Sentry from '@sentry/node';
 
 import {
@@ -81,11 +83,91 @@ try {
     getNaosIconsToolCallback,
   );
 
-  // Start receiving messages on stdin and sending messages on stdout
-  const transport = new StdioServerTransport();
+  // Create streamable HTTP transport for HTTP communication
+  const httpTransport = new StreamableHTTPServerTransport();
 
-  // Use Promise handling for async operations
-  await server.connect(transport);
+  // Handler function for HTTP requests
+  const httpHandler = async (req: IncomingMessage, res: ServerResponse) => {
+    // Enable CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    if (req.method === 'OPTIONS') {
+      res.writeHead(200);
+      res.end();
+      return;
+    }
+    
+    // Handle MCP over HTTP (Streamable HTTP transport)
+    if (req.url === '/message' || req.method === 'POST') {
+      try {
+        await httpTransport.handleRequest(req, res);
+        return;
+      } catch (error) {
+        console.error('MCP Transport error:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'MCP transport error' }));
+        return;
+      }
+    }
+    
+    // Basic HTTP API endpoints
+    if (req.url === '/health') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 
+        status: 'healthy', 
+        name: 'Naos MCP Server',
+        version: getPackageJSONVersion()
+      }));
+      return;
+    }
+    
+    if (req.url === '/tools') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        tools: [
+          { name: hiNaosToolName, description: hiNaosToolDescription },
+          { name: createNaosCursorRulesToolName, description: createNaosCursorRulesToolDescription },
+          { name: getNaosTokensToolName, description: getNaosTokensToolDescription },
+          { name: getNaosComponentDocsToolName, description: getNaosComponentDocsToolDescription },
+          { name: getNaosIconsToolName, description: getNaosIconsToolDescription }
+        ]
+      }));
+      return;
+    }
+    
+    // Default response - show available endpoints including MCP
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      message: 'Naos MCP Server is running',
+      version: getPackageJSONVersion(),
+      endpoints: ['/health', '/tools', '/message'],
+      mcp_endpoint: req.headers.host ? `https://${req.headers.host}/message` : 'http://localhost:3000/message',
+      instructions: 'Use POST /message for MCP protocol communication'
+    }));
+  };
+
+  // Check if running in Vercel or locally
+  if (process.env.VERCEL) {
+    // Export for Vercel serverless functions
+    module.exports = httpHandler;
+  } else if (process.env.NODE_ENV === 'production') {
+    // Connect server to HTTP transport
+    await server.connect(httpTransport);
+    
+    // For other production environments, create HTTP server
+    const { createServer } = await import('http');
+    const httpServer = createServer(httpHandler);
+    const port = process.env.PORT || 3000;
+    httpServer.listen(port, () => {
+      console.log(`MCP Server HTTP interface running on port ${port}`);
+    });
+  } else {
+    // For local development - use stdio transport for MCP protocol
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+  }
 } catch (error: unknown) {
   console.error('Naos MCP Error', error);
   process.exit(1);

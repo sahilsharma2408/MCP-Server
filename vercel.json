@@ -5,5 +5,15 @@
       "use": "@vercel/node"
     }
   ],
+  "routes": [
+    {
+      "src": "/message",
+      "dest": "dist/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "dist/server.js"
+    }
+  ],
   "buildCommand": "npm run build"
 }
