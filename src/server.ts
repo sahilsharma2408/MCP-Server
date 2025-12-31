@@ -42,124 +42,131 @@ import {
 
 import { getPackageJSONVersion } from './utils.js';
 
-// Create the server instance and handler
-let vercelHandler: ((req: IncomingMessage, res: ServerResponse) => Promise<void>) | null = null;
+// Create the server instance
+const server = new McpServer({
+  name: 'Naos MCP',
+  version: getPackageJSONVersion(),
+});
+
+// Initialize server tools
+function setupTools() {
+
+  server.tool(
+    hiNaosToolName,
+    hiNaosToolDescription,
+    hiNaosToolSchema,
+    hiNaosToolCallback,
+  );
+
+  server.tool(
+    createNaosCursorRulesToolName,
+    createNaosCursorRulesToolDescription,
+    createNaosCursorRulesToolSchema,
+    createNaosCursorRulesToolCallback,
+  );
+
+  server.tool(
+    getNaosTokensToolName,
+    getNaosTokensToolDescription,
+    getNaosTokensToolSchema,
+    getNaosTokensToolCallback,
+  );
+
+  server.tool(
+    getNaosComponentDocsToolName,
+    getNaosComponentDocsToolDescription,
+    getNaosComponentDocsToolSchema,
+    getNaosComponentDocsToolCallback,
+  );
+
+  server.tool(
+    getNaosIconsToolName,
+    getNaosIconsToolDescription,
+    getNaosIconsToolSchema,
+    getNaosIconsToolCallback,
+  );
+}
+
+let isInitialized = false;
 
 async function initializeServer() {
+  if (isInitialized) return;
+  
   try {
-    const server = new McpServer({
-      name: 'Naos MCP',
-      version: getPackageJSONVersion(),
-    });
-
-    server.tool(
-      hiNaosToolName,
-      hiNaosToolDescription,
-      hiNaosToolSchema,
-      hiNaosToolCallback,
-    );
-
-    server.tool(
-      createNaosCursorRulesToolName,
-      createNaosCursorRulesToolDescription,
-      createNaosCursorRulesToolSchema,
-      createNaosCursorRulesToolCallback,
-    );
-
-    server.tool(
-      getNaosTokensToolName,
-      getNaosTokensToolDescription,
-      getNaosTokensToolSchema,
-      getNaosTokensToolCallback,
-    );
-
-    server.tool(
-      getNaosComponentDocsToolName,
-      getNaosComponentDocsToolDescription,
-      getNaosComponentDocsToolSchema,
-      getNaosComponentDocsToolCallback,
-    );
-
-    server.tool(
-      getNaosIconsToolName,
-      getNaosIconsToolDescription,
-      getNaosIconsToolSchema,
-      getNaosIconsToolCallback,
-    );
+    setupTools();
 
     // Create streamable HTTP transport for HTTP communication
     const httpTransport = new StreamableHTTPServerTransport();
-
-    // Handler function for HTTP requests
-    const httpHandler = async (req: IncomingMessage, res: ServerResponse) => {
-      // Enable CORS
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-      
-      if (req.method === 'OPTIONS') {
-        res.writeHead(200);
-        res.end();
-        return;
-      }
-      
-      // Handle MCP over HTTP (Streamable HTTP transport)
-      if (req.url === '/message' || req.method === 'POST') {
-        try {
-          await httpTransport.handleRequest(req, res);
-          return;
-        } catch (error) {
-          console.error('MCP Transport error:', error);
-          res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'MCP transport error' }));
-          return;
-        }
-      }
-      
-      // Basic HTTP API endpoints
-      if (req.url === '/health') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ 
-          status: 'healthy', 
-          name: 'Naos MCP Server',
-          version: getPackageJSONVersion()
-        }));
-        return;
-      }
-      
-      if (req.url === '/tools') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          tools: [
-            { name: hiNaosToolName, description: hiNaosToolDescription },
-            { name: createNaosCursorRulesToolName, description: createNaosCursorRulesToolDescription },
-            { name: getNaosTokensToolName, description: getNaosTokensToolDescription },
-            { name: getNaosComponentDocsToolName, description: getNaosComponentDocsToolDescription },
-            { name: getNaosIconsToolName, description: getNaosIconsToolDescription }
-          ]
-        }));
-        return;
-      }
-      
-      // Default response - show available endpoints including MCP
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ 
-        message: 'Naos MCP Server is running',
-        version: getPackageJSONVersion(),
-        endpoints: ['/health', '/tools', '/message'],
-        mcp_endpoint: req.headers.host ? `https://${req.headers.host}/message` : 'http://localhost:3000/message',
-        instructions: 'Use POST /message for MCP protocol communication'
-      }));
-    };
 
     // Check if running in Vercel or locally
     if (process.env.VERCEL) {
       // For Vercel serverless functions
       await server.connect(httpTransport);
-      vercelHandler = httpHandler;
     } else if (process.env.NODE_ENV === 'production') {
       // Connect server to HTTP transport
       await server.connect(httpTransport);
+      
+      // Handler function for HTTP requests (non-Vercel production)
+      const httpHandler = async (req: IncomingMessage, res: ServerResponse) => {
+        // Enable CORS
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        
+        if (req.method === 'OPTIONS') {
+          res.writeHead(200);
+          res.end();
+          return;
+        }
+        
+        // Handle MCP over HTTP (Streamable HTTP transport)
+        if (req.url === '/message' || req.method === 'POST') {
+          try {
+            await httpTransport.handleRequest(req, res);
+            return;
+          } catch (error) {
+            console.error('MCP Transport error:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'MCP transport error' }));
+            return;
+          }
+        }
+        
+        // Basic HTTP API endpoints
+        if (req.url === '/health') {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ 
+            status: 'healthy', 
+            name: 'Naos MCP Server',
+            version: getPackageJSONVersion()
+          }));
+          return;
+        }
+        
+        if (req.url === '/tools') {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            tools: [
+              { name: hiNaosToolName, description: hiNaosToolDescription },
+              { name: createNaosCursorRulesToolName, description: createNaosCursorRulesToolDescription },
+              { name: getNaosTokensToolName, description: getNaosTokensToolDescription },
+              { name: getNaosComponentDocsToolName, description: getNaosComponentDocsToolDescription },
+              { name: getNaosIconsToolName, description: getNaosIconsToolDescription }
+            ]
+          }));
+          return;
+        }
+        
+        // Default response - show available endpoints including MCP
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+          message: 'Naos MCP Server is running',
+          version: getPackageJSONVersion(),
+          endpoints: ['/health', '/tools', '/message'],
+          mcp_endpoint: req.headers.host ? `https://${req.headers.host}/message` : 'http://localhost:3000/message',
+          instructions: 'Use POST /message for MCP protocol communication'
+        }));
+      };
       
       // For other production environments, create HTTP server
       const { createServer } = await import('http');
@@ -173,20 +180,82 @@ async function initializeServer() {
       const transport = new StdioServerTransport();
       await server.connect(transport);
     }
+    
+    isInitialized = true;
   } catch (error: unknown) {
     console.error('Naos MCP Error', error);
     process.exit(1);
   }
 }
 
-// Initialize the server
-if (process.env.VERCEL) {
-  // For Vercel, initialize immediately
-  await initializeServer();
-} else {
-  // For other environments, initialize without await at top level
+// Initialize the server for non-Vercel environments
+if (!process.env.VERCEL) {
   initializeServer().catch(console.error);
 }
 
-// Export default handler for Vercel
-export default vercelHandler;
+// Vercel serverless function handler
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
+  await initializeServer();
+  
+  // Create streamable HTTP transport for HTTP communication
+  const httpTransport = new StreamableHTTPServerTransport();
+  
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+  
+  // Handle MCP over HTTP (Streamable HTTP transport)
+  if (req.url === '/message' || req.method === 'POST') {
+    try {
+      await httpTransport.handleRequest(req, res);
+      return;
+    } catch (error) {
+      console.error('MCP Transport error:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'MCP transport error' }));
+      return;
+    }
+  }
+  
+  // Basic HTTP API endpoints
+  if (req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      status: 'healthy', 
+      name: 'Naos MCP Server',
+      version: getPackageJSONVersion()
+    }));
+    return;
+  }
+  
+  if (req.url === '/tools') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      tools: [
+        { name: hiNaosToolName, description: hiNaosToolDescription },
+        { name: createNaosCursorRulesToolName, description: createNaosCursorRulesToolDescription },
+        { name: getNaosTokensToolName, description: getNaosTokensToolDescription },
+        { name: getNaosComponentDocsToolName, description: getNaosComponentDocsToolDescription },
+        { name: getNaosIconsToolName, description: getNaosIconsToolDescription }
+      ]
+    }));
+    return;
+  }
+  
+  // Default response - show available endpoints including MCP
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ 
+    message: 'Naos MCP Server is running',
+    version: getPackageJSONVersion(),
+    endpoints: ['/health', '/tools', '/message'],
+    mcp_endpoint: req.headers.host ? `https://${req.headers.host}/message` : 'http://localhost:3000/message',
+    instructions: 'Use POST /message for MCP protocol communication'
+  }));
+}
