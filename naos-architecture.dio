@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Naos MCP Server Interaction" id="naos-mcp-interaction">
-        <mxGraphModel dx="1986" dy="602" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+        <mxGraphModel dx="1938" dy="728" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -22,8 +22,8 @@
                 <mxCell id="knowledge-base" value="📚 Knowledge Base&#xa;(Design System Docs)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
                     <mxGeometry x="990" y="100" width="140" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="docs-core" value="📖 @sahilsharma2408/docs-core" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
-                    <mxGeometry x="690" y="310" width="140" height="90" as="geometry"/>
+                <mxCell id="docs-core" value="📖 @dtsl/docs-core" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="310" width="140" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="analytics" value="📊 Segment Analytics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6d0de;strokeColor=#996185;" parent="1" vertex="1">
                     <mxGeometry x="540" y="200" width="140" height="40" as="geometry"/>
@@ -125,13 +125,13 @@
                 <mxCell id="process-text" value="1. User asks design system question in editor&lt;br&gt;2. Editor forwards query to configured LLM&lt;br&gt;3. LLM requests available resources from Naos MCP server&lt;br&gt;4. MCP server queries knowledge base&lt;br&gt;5. Server returns structured design system documentation&lt;br&gt;6. LLM combines context with user query to generate enhanced response&lt;br&gt;7. User receives comprehensive answer with examples and guidelines" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;" parent="1" vertex="1">
                     <mxGeometry x="220" y="440" width="530" height="85" as="geometry"/>
                 </mxCell>
-                <mxCell id="8" value="📖&amp;nbsp;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;@sahilsharma2408&lt;/span&gt;/docs-react" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
-                    <mxGeometry x="860" y="310" width="140" height="90" as="geometry"/>
+                <mxCell id="8" value="📖 @dtsl/docs-react" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="860" y="310" width="140" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="📖&amp;nbsp;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;@sahilsharma2408&lt;/span&gt;/docs-icons" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
-                    <mxGeometry x="1010" y="310" width="170" height="90" as="geometry"/>
+                <mxCell id="10" value="📖 @dtsl/docs-icons" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="1020" y="310" width="140" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="12" value="Fetch content" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" target="8" edge="1">
+                <mxCell id="12" value="Fetch content" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=2;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="8">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="930" y="210" as="sourcePoint"/>
                         <mxPoint x="1010" y="260" as="targetPoint"/>
@@ -140,7 +140,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="13" value="Fetch content" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=2;entryX=0.201;entryY=-0.072;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1">
+                <mxCell id="13" value="Fetch content" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=2;entryX=0.201;entryY=-0.072;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1">
                     <mxGeometry x="-0.0479" relative="1" as="geometry">
                         <mxPoint x="1040" y="212.88" as="sourcePoint"/>
                         <mxPoint x="1038.1399999999999" y="310" as="targetPoint"/>
@@ -151,7 +151,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="16" value="Error Handling" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673A6;strokeWidth=1;dashed=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" target="sentry" edge="1">
+                <mxCell id="16" value="Error Handling" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673A6;strokeWidth=1;dashed=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="sentry">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="610" y="240" as="sourcePoint"/>
                         <mxPoint x="610" y="271" as="targetPoint"/>

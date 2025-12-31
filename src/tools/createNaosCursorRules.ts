@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { basename, join } from 'path';
 import {
   existsSync,
   unlinkSync,
@@ -9,11 +9,13 @@ import {
 import type { ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import {
-  Naos_CURSOR_RULES_FILE_PATH,
-  hasOutDatedRules,
-  CURSOR_RULES_VERSION,
   handleError,
+  DESIGN_TOKENS_DIRECTORY,
+  areTokensOutdated,
+  analyticsToolCallEventName,
 } from '../utils.js';
+import { sendAnalytics } from '../utils/analyticsUtils.js';
+import { getUserName } from '../utils/getUserName.js';
 
 const createNaosCursorRulesToolName = 'create_naos_cursor_rules';
 
@@ -24,7 +26,7 @@ const createNaosCursorRulesToolSchema = {
   currentProjectRootDirectory: z
     .string()
     .describe(
-      "The working root directory of the consumer's project. Do not use root directory, do not use '.', only use absolute path to current directory"
+      "The working root directory of the consumer's project. Do not use root directory, do not use '.', only use absolute path to current directory",
     ),
 };
 
@@ -40,37 +42,50 @@ const createNaosCursorRulesToolCallback: ToolCallback<
     const ruleFilePath = join(ruleFileDir, 'frontend-naos-rules.mdc');
 
     if (existsSync(ruleFilePath)) {
-      if (hasOutDatedRules(ruleFilePath)) {
-        // removes the outdated rules file and continues execution to generate new rule file
+      if (areTokensOutdated(ruleFilePath)) {
+        // Remove outdated rules and regenerate
         unlinkSync(ruleFilePath);
       } else {
         return {
           content: [
-            { type: 'text', text: 'Cursor rules already exist. Doing nothing' },
+            {
+              type: 'text',
+              text: 'Cursor rules are up to date. Doing nothing',
+            },
           ],
         };
       }
     }
 
-    const ruleFileTemplateContent = readFileSync(
-      Naos_CURSOR_RULES_FILE_PATH,
-      'utf8'
-    ).replace(
-      'rules_version: <!-- dynamic_version -->',
-      `rules_version: ${CURSOR_RULES_VERSION}`
-    );
+    const tokenFilePath = join(DESIGN_TOKENS_DIRECTORY, 'index.css');
+    const packageJsonPath = join(DESIGN_TOKENS_DIRECTORY, '..', 'package.json');
 
+    let ruleFileTemplateContent = readFileSync(tokenFilePath, 'utf8');
+
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+
+    ruleFileTemplateContent = `/* Created with @dtsl/css-design-token@${packageJson.version} */\n${ruleFileTemplateContent}`;
     if (!existsSync(ruleFileDir)) {
       mkdirSync(ruleFileDir, { recursive: true });
     }
 
     writeFileSync(ruleFilePath, ruleFileTemplateContent);
 
+    sendAnalytics({
+      eventName: analyticsToolCallEventName,
+      properties: {
+        toolName: createNaosCursorRulesToolName,
+        cursorRulesVersion: packageJson.version,
+        rootDirectoryName: basename(currentProjectRootDirectory),
+        userName: getUserName(currentProjectRootDirectory),
+      },
+    });
+
     return {
       content: [
         {
           type: 'text',
-          text: `Naos cursor rules created at: ${ruleFilePath}. Cursor Rules Version: ${CURSOR_RULES_VERSION}`,
+          text: `Naos cursor rules created at: ${ruleFilePath}. Cursor Rules Version: ${packageJson.version}`,
         },
       ],
     };

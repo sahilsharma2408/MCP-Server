@@ -1,6 +1,8 @@
 #!/usr/bin/env node
+
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+// import * as Sentry from '@sentry/node';
 
 import {
   createNaosCursorRulesToolName,
@@ -8,6 +10,14 @@ import {
   createNaosCursorRulesToolSchema,
   createNaosCursorRulesToolCallback,
 } from './tools/createNaosCursorRules.js';
+
+import {
+  getNaosTokensToolName,
+  getNaosTokensToolDescription,
+  getNaosTokensToolSchema,
+  getNaosTokensToolCallback,
+} from './tools/getNaosTokens.js';
+
 import {
   getNaosComponentDocsToolName,
   getNaosComponentDocsToolDescription,
@@ -20,6 +30,14 @@ import {
   hiNaosToolSchema,
   hiNaosToolCallback,
 } from './tools/hiNaos.js';
+
+import {
+  getNaosIconsToolName,
+  getNaosIconsToolDescription,
+  getNaosIconsToolSchema,
+  getNaosIconsToolCallback,
+} from './tools/getNaosIcons.js';
+
 import { getPackageJSONVersion } from './utils.js';
 
 try {
@@ -32,21 +50,35 @@ try {
     hiNaosToolName,
     hiNaosToolDescription,
     hiNaosToolSchema,
-    hiNaosToolCallback
+    hiNaosToolCallback,
   );
 
   server.tool(
     createNaosCursorRulesToolName,
     createNaosCursorRulesToolDescription,
     createNaosCursorRulesToolSchema,
-    createNaosCursorRulesToolCallback
+    createNaosCursorRulesToolCallback,
+  );
+
+  server.tool(
+    getNaosTokensToolName,
+    getNaosTokensToolDescription,
+    getNaosTokensToolSchema,
+    getNaosTokensToolCallback,
   );
 
   server.tool(
     getNaosComponentDocsToolName,
     getNaosComponentDocsToolDescription,
     getNaosComponentDocsToolSchema,
-    getNaosComponentDocsToolCallback
+    getNaosComponentDocsToolCallback,
+  );
+
+  server.tool(
+    getNaosIconsToolName,
+    getNaosIconsToolDescription,
+    getNaosIconsToolSchema,
+    getNaosIconsToolCallback,
   );
 
   // Start receiving messages on stdin and sending messages on stdout

@@ -18,7 +18,6 @@ dotenv.config();
 
 // Use environment variables with defaults
 const NODE_ENV = process.env.NODE_ENV;
-const BLADE_MCP_SENTRY_DSN = process.env.BLADE_MCP_SENTRY_DSN || '';
 
 async function replaceEnvironmentVariables() {
   try {
@@ -27,21 +26,6 @@ async function replaceEnvironmentVariables() {
       files: SERVER_JS_PATH,
       from: /process\.env\.NODE_ENV\s*\?\?\s*['"]development['"]/g,
       to: `'${NODE_ENV}'`,
-    });
-
-    // Replace SENTRY_DSN
-    await replaceInFile({
-      files: SERVER_JS_PATH,
-      from: /process\.env\.BLADE_MCP_SENTRY_DSN/g,
-      to: `'${BLADE_MCP_SENTRY_DSN}'`,
-    });
-
-    // Replace BLADE_SEGMENT_KEY
-    const BLADE_SEGMENT_KEY = process.env.BLADE_SEGMENT_KEY || '';
-    await replaceInFile({
-      files: UTILS_JS_PATH,
-      from: /process\.env\.BLADE_SEGMENT_KEY/g,
-      to: `'${BLADE_SEGMENT_KEY}'`,
     });
   } catch (error) {
     console.error('Error during environment variables replacement:', error);

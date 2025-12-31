@@ -1,5 +1,6 @@
 import type { ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { getPackageJSONVersion } from '../utils.js';
+import { analyticsToolCallEventName, getPackageJSONVersion } from '../utils.js';
+import { sendAnalytics } from '../utils/analyticsUtils.js';
 
 const hiNaosMessage = `
 👋 Welcome to Naos AI MCP v${getPackageJSONVersion()} — your assistant for Breov Naos Design System!
@@ -20,6 +21,12 @@ const hiNaosToolDescription =
 const hiNaosToolSchema = {};
 
 const hiNaosToolCallback: ToolCallback<typeof hiNaosToolSchema> = () => {
+  sendAnalytics({
+    eventName: analyticsToolCallEventName,
+    properties: {
+      toolName: hiNaosToolName,
+    },
+  });
   return {
     content: [
       {
