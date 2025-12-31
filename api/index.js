@@ -106,7 +106,16 @@ async function initializeServer() {
 
 // Vercel serverless function handler
 export default async function handler(req, res) {
-  await initializeServer();
+  try {
+    await initializeServer();
+  } catch (error) {
+    console.error('Server initialization failed:', error);
+    res.status(500).json({ 
+      error: 'Server initialization failed', 
+      details: error.message 
+    });
+    return;
+  }
   
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -119,19 +128,19 @@ export default async function handler(req, res) {
   }
   
   // Handle MCP over HTTP (Streamable HTTP transport)
-  if (req.url === '/message' || req.method === 'POST') {
+  if (req.url === '/api' || req.url === '/api/' || req.url === '/api/message' || req.method === 'POST') {
     try {
       await httpTransport.handleRequest(req, res);
       return;
     } catch (error) {
       console.error('MCP Transport error:', error);
-      res.status(500).json({ error: 'MCP transport error' });
+      res.status(500).json({ error: 'MCP transport error', details: error.message });
       return;
     }
   }
   
   // Basic HTTP API endpoints
-  if (req.url === '/health') {
+  if (req.url === '/api/health' || req.query.endpoint === 'health') {
     res.status(200).json({ 
       status: 'healthy', 
       name: 'Naos MCP Server',
@@ -140,7 +149,7 @@ export default async function handler(req, res) {
     return;
   }
   
-  if (req.url === '/tools') {
+  if (req.url === '/api/tools' || req.query.endpoint === 'tools') {
     res.status(200).json({
       tools: [
         { name: hiNaosToolName, description: hiNaosToolDescription },
@@ -157,8 +166,12 @@ export default async function handler(req, res) {
   res.status(200).json({ 
     message: 'Naos MCP Server is running',
     version: getPackageJSONVersion(),
-    endpoints: ['/health', '/tools', '/message'],
-    mcp_endpoint: req.headers.host ? `https://${req.headers.host}/message` : 'http://localhost:3000/message',
-    instructions: 'Use POST /message for MCP protocol communication'
+    endpoints: ['/api/health', '/api/tools', '/api/message'],
+    mcp_endpoint: req.headers.host ? `https://${req.headers.host}/api/message` : 'http://localhost:3000/api/message',
+    instructions: 'Use POST /api/ for MCP protocol communication',
+    env_check: {
+      npm_auth_token: process.env.NPM_AUTH_TOKEN ? 'present' : 'missing',
+      vercel: process.env.VERCEL || 'not set'
+    }
   });
 }

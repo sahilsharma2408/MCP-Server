@@ -1,0 +1,2 @@
+# Include .npmrc for dtsl package authentication
+!.npmrc
