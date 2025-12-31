@@ -88,6 +88,7 @@ function setupTools() {
 }
 
 let isInitialized = false;
+let httpTransport: StreamableHTTPServerTransport | null = null;
 
 async function initializeServer() {
   if (isInitialized) return;
@@ -96,7 +97,7 @@ async function initializeServer() {
     setupTools();
 
     // Create streamable HTTP transport for HTTP communication
-    const httpTransport = new StreamableHTTPServerTransport();
+    httpTransport = new StreamableHTTPServerTransport();
 
     // Check if running in Vercel or locally
     if (process.env.VERCEL) {
@@ -121,6 +122,11 @@ async function initializeServer() {
         
         // Handle MCP over HTTP (Streamable HTTP transport)
         if (req.url === '/message' || req.method === 'POST') {
+          if (!httpTransport) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Server transport not initialized' }));
+            return;
+          }
           try {
             await httpTransport.handleRequest(req, res);
             return;
@@ -229,8 +235,12 @@ if (!process.env.VERCEL) {
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   await initializeServer();
   
-  // Create streamable HTTP transport for HTTP communication
-  const httpTransport = new StreamableHTTPServerTransport();
+  // Use the shared httpTransport instance
+  if (!httpTransport) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Server not properly initialized' }));
+    return;
+  }
   
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
