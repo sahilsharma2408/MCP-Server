@@ -1,6 +1,29 @@
+// Vercel serverless function entry point
+// This file re-exports the main server functionality
+
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 
+// Get current file path
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Inline utilities needed from utils.js since we can't reliably import from dist in Vercel
+const getPackageJSONVersion = () => {
+  try {
+    const packageJsonPath = join(__dirname, '..', 'package.json');
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    return packageJson.version || '0.0.0';
+  } catch (error) {
+    console.error('Error reading package.json:', error);
+    return '0.0.0';
+  }
+};
+
+// Tool imports - these need to be available in the deployment
 import {
   createNaosCursorRulesToolName,
   createNaosCursorRulesToolDescription,
@@ -36,8 +59,6 @@ import {
   getNaosIconsToolCallback,
 } from '../dist/tools/getNaosIcons.js';
 
-import { getPackageJSONVersion } from '../dist/utils.js';
-
 // Create the server instance
 const server = new McpServer({
   name: 'Naos MCP',
@@ -48,6 +69,88 @@ const server = new McpServer({
 function setupTools() {
   server.tool(
     hiNaosToolName,
+    hiNaosToolDescription,
+    hiNaosToolSchema,
+    hiNaosToolCallback,
+  );
+  server.tool(
+    createNaosCursorRulesToolName,
+    createNaosCursorRulesToolDescription,
+    createNaosCursorRulesToolSchema,
+    createNaosCursorRulesToolCallback,
+  );
+  server.tool(
+    getNaosTokensToolName,
+    getNaosTokensToolDescription,
+    getNaosTokensToolSchema,
+    getNaosTokensToolCallback,
+  );
+  server.tool(
+    getNaosComponentDocsToolName,
+    getNaosComponentDocsToolDescription,
+    getNaosComponentDocsToolSchema,
+    getNaosComponentDocsToolCallback,
+  );
+  server.tool(
+    getNaosIconsToolName,
+    getNaosIconsToolDescription,
+    getNaosIconsToolSchema,
+    getNaosIconsToolCallback,
+  );
+}
+
+let isInitialized = false;
+
+async function initializeServer() {
+  if (isInitialized) return;
+
+  try {
+    setupTools();
+    // Create streamable HTTP transport for HTTP communication
+    const httpTransport = new StreamableHTTPServerTransport();
+    // Connect server to HTTP transport for Vercel
+    await server.connect(httpTransport);
+    isInitialized = true;
+  } catch (error) {
+    console.error('Failed to initialize server:', error);
+    throw error;
+  }
+}
+
+// Vercel serverless function handler
+export default async function handler(req, res) {
+  try {
+    // Initialize server if not already done
+    await initializeServer();
+
+    // Enable CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
+
+    // Handle the request with the MCP server
+    const transport = server.transport as StreamableHTTPServerTransport;
+    
+    if (transport && transport.handleRequest) {
+      await transport.handleRequest(req, res);
+    } else {
+      // Fallback response
+      res.status(200).json({
+        name: 'Naos MCP Server',
+        version: getPackageJSONVersion(),
+        status: 'running'
+      });
+    }
+  } catch (error) {
+    console.error('Handler error:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+}
     hiNaosToolDescription,
     hiNaosToolSchema,
     hiNaosToolCallback,
