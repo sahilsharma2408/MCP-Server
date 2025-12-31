@@ -2,7 +2,10 @@
   "builds": [
     {
       "src": "dist/server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     }
   ],
   "routes": [
@@ -23,10 +26,5 @@
       "dest": "dist/server.js"
     }
   ],
-  "buildCommand": "npm run build",
-  "functions": {
-    "dist/server.js": {
-      "maxDuration": 30
-    }
-  }
+  "buildCommand": "npm run build"
 }
