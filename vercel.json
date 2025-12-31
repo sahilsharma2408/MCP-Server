@@ -6,5 +6,6 @@
       "maxDuration": 30,
       "includeFiles": "dist/**"
     }
-  }
+  },
+  "outputDirectory": null
 }
