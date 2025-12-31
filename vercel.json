@@ -11,19 +11,19 @@
   "routes": [
     {
       "src": "/health",
-      "dest": "/dist/server.js"
+      "dest": "dist/server.js"
     },
     {
-      "src": "/tools",
-      "dest": "/dist/server.js"
+      "src": "/tools", 
+      "dest": "dist/server.js"
     },
     {
       "src": "/message",
-      "dest": "/dist/server.js"
+      "dest": "dist/server.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/server.js"
+      "dest": "dist/server.js"
     }
   ],
   "buildCommand": "npm run build"
