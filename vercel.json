@@ -7,6 +7,14 @@
   ],
   "routes": [
     {
+      "src": "/health",
+      "dest": "dist/server.js"
+    },
+    {
+      "src": "/tools",
+      "dest": "dist/server.js"
+    },
+    {
       "src": "/message",
       "dest": "dist/server.js"
     },
@@ -15,5 +23,10 @@
       "dest": "dist/server.js"
     }
   ],
-  "buildCommand": "npm run build"
+  "buildCommand": "npm run build",
+  "functions": {
+    "dist/server.js": {
+      "maxDuration": 30
+    }
+  }
 }
