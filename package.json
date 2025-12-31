@@ -14,8 +14,8 @@
   "license": "MIT",
   "author": "Brevo",
   "type": "module",
-  "main": "dist/server.js",
-  "bin": "dist/server.js",
+  "main": "/dist/server.js",
+  "bin": "/dist/server.js",
   "files": [
     "dist",
     "cursorRules"
