@@ -157,12 +157,44 @@ async function initializeServer() {
           return;
         }
         
+        if (req.url === '/sse') {
+          res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Cache-Control'
+          });
+          
+          // Send initial connection event
+          res.write(`data: ${JSON.stringify({
+            type: 'connection',
+            message: 'Connected to Naos MCP Server SSE',
+            timestamp: new Date().toISOString()
+          })}\n\n`);
+          
+          // Keep connection alive with periodic heartbeat
+          const heartbeat = setInterval(() => {
+            res.write(`data: ${JSON.stringify({
+              type: 'heartbeat',
+              timestamp: new Date().toISOString()
+            })}\n\n`);
+          }, 30000);
+          
+          // Clean up on client disconnect
+          req.on('close', () => {
+            clearInterval(heartbeat);
+          });
+          
+          return;
+        }
+        
         // Default response - show available endpoints including MCP
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ 
           message: 'Naos MCP Server is running',
           version: getPackageJSONVersion(),
-          endpoints: ['/health', '/tools', '/message'],
+          endpoints: ['/health', '/tools', '/message', '/sse'],
           mcp_endpoint: req.headers.host ? `https://${req.headers.host}/message` : 'http://localhost:3000/message',
           instructions: 'Use POST /message for MCP protocol communication'
         }));
@@ -249,12 +281,40 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
   
+  if (req.url === '/sse') {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Cache-Control'
+    });
+    
+    // Send initial connection event
+    res.write(`data: ${JSON.stringify({
+      type: 'connection',
+      message: 'Connected to Naos MCP Server SSE',
+      timestamp: new Date().toISOString()
+    })}\n\n`);
+    
+    // Send server info
+    res.write(`data: ${JSON.stringify({
+      type: 'info',
+      name: 'Naos MCP Server',
+      version: getPackageJSONVersion(),
+      environment: 'vercel',
+      timestamp: new Date().toISOString()
+    })}\n\n`);
+    
+    return;
+  }
+  
   // Default response - show available endpoints including MCP
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ 
     message: 'Naos MCP Server is running',
     version: getPackageJSONVersion(),
-    endpoints: ['/health', '/tools', '/message'],
+    endpoints: ['/health', '/tools', '/message', '/sse'],
     mcp_endpoint: req.headers.host ? `https://${req.headers.host}/message` : 'http://localhost:3000/message',
     instructions: 'Use POST /message for MCP protocol communication'
   }));
