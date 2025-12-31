@@ -4,11 +4,7 @@
   "functions": {
     "api/index.js": {
       "maxDuration": 30,
-      "includeFiles": [
-        "dist/**",
-        "cursorRules/**",
-        "package.json"
-      ]
+      "includeFiles": "dist/**"
     }
   }
 }
